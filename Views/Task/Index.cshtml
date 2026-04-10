@@ -1,0 +1,69 @@
+﻿@model IEnumerable<TaskFlow.Models.TaskItem>
+
+@{
+    ViewData["Title"] = "My Tasks";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>My Tasks</h2>
+        <a asp-action="Create" class="btn btn-primary">+ New Task</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <p class="text-muted">No tasks yet. Create one!</p>
+    }
+    else
+    {
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Due Date</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var task in Model)
+                {
+                    <tr>
+                        <td>@task.Title</td>
+                        <td>@task.DueDate.ToString("MMM dd, yyyy")</td>
+                        <td>
+                            <span class="badge
+                                @(task.Priority == "High" ? "bg-danger" :
+                                  task.Priority == "Medium" ? "bg-warning text-dark" :
+                                  "bg-success")">
+                                @task.Priority
+                            </span>
+                        </td>
+                        <td>
+                            <form asp-action="ToggleComplete" asp-route-id="@task.Id" method="post" style="display:inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="badge border-0
+            @(task.IsCompleted ? "bg-success" : "bg-secondary")">
+                                    @(task.IsCompleted ? "Done" : "Pending")
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@task.Id"
+                               class="btn btn-sm btn-outline-primary">Edit</a>
+                            <form asp-action="Delete" asp-route-id="@task.Id"
+                                  method="post" style="display:inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                        onclick="return confirm('Delete this task?')">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>  

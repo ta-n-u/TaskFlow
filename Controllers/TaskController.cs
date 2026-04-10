@@ -77,5 +77,19 @@ namespace TaskFlow.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+
+        // POST: /Task/ToggleComplete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleComplete(int id)
+        {
+            var task = await _context.TaskItems.FindAsync(id);
+            if (task == null) return NotFound();
+
+            task.IsCompleted = !task.IsCompleted;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
